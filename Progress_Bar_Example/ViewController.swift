@@ -109,7 +109,7 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         
         itemToAnimate.add(basicAnimation, forKey: forKey)
     }
-    */ 
+    */
  
     private func downloadFile() {
         self.shapeLayer.strokeEnd = 0
