@@ -41,14 +41,16 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         self.view.backgroundColor = .yellow
         
+        addDownloadTrack()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(animatePulse), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+    }
+    
+    fileprivate func addDownloadTrack() {
         pulseLayer = createCircularLayer(fillColor: UIColor.purple.withAlphaComponent(0.85), strokeColor: .clear)
-        let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
-        pulseAnimation.toValue = 1.2
-        pulseAnimation.duration = 0.8
-        pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        pulseAnimation.autoreverses = true
-        pulseAnimation.repeatCount = Float.infinity
-        pulseLayer.add(pulseAnimation, forKey: "pulse")
+        animatePulse()
         self.view.layer.addSublayer(pulseLayer!)
         
         trackLayer = createCircularLayer(fillColor: .yellow, strokeColor: .lightGray)
@@ -59,8 +61,6 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         self.view.layer.addSublayer(shapeLayer!)
         
         add_downloading_labels()
-        
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
     }
     
     private func createCircularLayer(fillColor: UIColor, strokeColor: UIColor) -> CAShapeLayer {
@@ -76,6 +76,16 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         return layer
     }
     
+    @objc fileprivate func animatePulse() {
+        let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+        pulseAnimation.toValue = 1.2
+        pulseAnimation.duration = 0.8
+        pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        pulseAnimation.autoreverses = true
+        pulseAnimation.repeatCount = Float.infinity
+        pulseLayer.add(pulseAnimation, forKey: "pulse")
+    }
+    
     fileprivate func add_downloading_labels() {
         progressContainer.frame = CGRect(x: 0, y: 0, width: containerDimension, height: containerDimension)
         progressPct.frame = CGRect(x: 0, y: 0, width: containerDimension, height: containerDimension * progressStatusPct)
@@ -89,7 +99,7 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         progressStatus.textAlignment = .center
         
         progressPct.text = "0%"
-        progressStatus.text = "standby..."
+        progressStatus.text = "standby"
     }
     
     /*
